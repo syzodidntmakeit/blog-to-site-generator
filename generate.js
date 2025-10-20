@@ -1,16 +1,17 @@
 // generate.js
-// A custom static site generator for kawaii-san.org
+// A custom static site generator for kawaii-san.org (Now with 100% less Python)
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os'); // <-- ADD THIS LINE to get access to the OS module
 const marked = require('marked');
 const fm = require('front-matter');
 const chalk = require('chalk');
 
 // --- CONFIGURATION ---
-// In a real app, you might move this to a config file.
 const TEMPLATE_PATH = path.join(__dirname, 'template.html');
-const OUTPUT_DIR_BASE = path.expanduser('~/kawaiiblog/posts'); // Uses your home directory
+// --- THIS IS THE FIXED LINE ---
+const OUTPUT_DIR_BASE = path.join(os.homedir(), 'kawaiiblog', 'posts'); // <-- THE FIX!
 
 // --- HELPER FUNCTIONS ---
 
@@ -68,7 +69,6 @@ const generatePost = (markdownPath) => {
     }
 
     // Convert Markdown body to HTML
-    // You can customize marked here if needed for special classes, etc.
     const htmlContent = marked.parse(body);
     const readingTime = calculateReadingTime(body);
 
@@ -82,10 +82,10 @@ const generatePost = (markdownPath) => {
     };
 
     for (const [placeholder, value] of Object.entries(replacements)) {
-        template = template.replace(new RegExp(placeholder, 'g'), value);
+        template = template.replace(new RegExp(placeholder.replace(/\[/g, '\\[').replace(/\]/g, '\\]'), 'g'), value);
     }
-
-    // A little extra regex for the OG image URL format
+    
+    // Additional specific replacements
     template = template.replace(/Blog-\[YYYY-MM-DD\]\.png/g, `Blog-${metadata.date}.png`);
     template = template.replace(/<span class="reading-time">--<\/span>/g, `<span class="reading-time">${readingTime}</span>`);
 
@@ -107,7 +107,6 @@ const generatePost = (markdownPath) => {
 
 // --- SCRIPT EXECUTION ---
 
-// Get the file path from the command line arguments
 const inputFile = process.argv[2];
 
 if (!inputFile) {
