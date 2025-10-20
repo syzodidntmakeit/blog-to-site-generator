@@ -10,7 +10,7 @@ const chalk = require('chalk');
 // --- CONFIGURATION ---
 // In a real app, you might move this to a config file.
 const TEMPLATE_PATH = path.join(__dirname, 'template.html');
-const OUTPUT_DIR_BASE = path.expanduser('~/kawaiiblog'); // Uses your home directory
+const OUTPUT_DIR_BASE = path.expanduser('~/kawaiiblog/posts'); // Uses your home directory
 
 // --- HELPER FUNCTIONS ---
 
